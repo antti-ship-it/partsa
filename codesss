@@ -1,0 +1,766 @@
+
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kyydit – järjestely</title>
+  <style>
+    :root{
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #101828;
+      --muted: #475467;
+      --muted2:#667085;
+      --line: #EAECF0;
+      --brand:#3B82F6;
+      --brand2:#7C3AED;
+      --good:#12B76A;
+      --warn:#F79009;
+      --bad:#F04438;
+      --shadow: 0 10px 30px rgba(16,24,40,.08);
+      --radius: 18px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    body{
+      margin:0;
+      background:
+        radial-gradient(900px 500px at 10% -10%, rgba(59,130,246,.20), transparent 60%),
+        radial-gradient(800px 450px at 95% 0%, rgba(124,58,237,.16), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    .wrap{ max-width: 1200px; margin: 0 auto; padding: 22px; }
+    .top{
+      display:flex; gap:14px; align-items:stretch; justify-content:space-between; flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    .card.tight{ padding:14px; }
+    .grow{ flex:1; min-width: 320px; }
+    h1{ margin:0; font-size:18px; letter-spacing:.2px; }
+    .sub{ margin-top:6px; color:var(--muted); font-size:13px; line-height:1.35; }
+
+    .filebox{
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      padding:12px;
+      border:1px dashed #D0D5DD;
+      background:#F9FAFB;
+      border-radius: 16px;
+    }
+    input[type="file"]{ color: var(--muted2); max-width: 260px; }
+    .filemeta{ color: var(--muted); font-size: 13px; }
+
+    .status{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background:#F9FAFB;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .tabs{
+      display:flex; gap:10px; margin: 12px 0 14px;
+    }
+    .tab{
+      border:1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      padding:10px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-size: 13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    .tab.active{
+      color: var(--text);
+      border-color: rgba(59,130,246,.35);
+      background: rgba(59,130,246,.08);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){ .grid{ grid-template-columns:1fr; } }
+
+    .headerRow{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      margin-bottom:10px;
+    }
+    h2{ margin:0; font-size: 14px; }
+    .hint{ color: var(--muted2); font-size: 12px; line-height: 1.3; }
+
+    .pills{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .dot{ width:8px; height:8px; border-radius:999px; background: #98A2B3; }
+    .dot.good{ background: var(--good); }
+    .dot.warn{ background: var(--warn); }
+    .dot.bad{ background: var(--bad); }
+
+    .sectionTitle{
+      margin-top:12px;
+      display:flex; align-items:center; gap:10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .sectionTitle .line{
+      height:1px; background: var(--line); flex:1;
+    }
+
+    .list{ display:flex; flex-direction:column; gap:10px; }
+    .person{
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding:12px;
+      background: #fff;
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:12px;
+    }
+    .name{ font-weight: 650; font-size: 13px; }
+    .meta{ margin-top:6px; display:flex; gap:8px; flex-wrap:wrap; color: var(--muted2); font-size: 12px; }
+    .chip{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 8px;
+      border-radius: 999px;
+      background: #F9FAFB;
+      border: 1px solid var(--line);
+      color: var(--muted2);
+      font-size: 12px;
+    }
+    .chip.good{ background: rgba(18,183,106,.10); border-color: rgba(18,183,106,.25); color: #067647; }
+    .chip.bad{ background: rgba(240,68,56,.10); border-color: rgba(240,68,56,.25); color: #B42318; }
+    .chip.warn{ background: rgba(247,144,9,.12); border-color: rgba(247,144,9,.25); color: #B54708; }
+    .controls{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; min-width: 260px; }
+    .rowc{ display:flex; gap:8px; align-items:center; justify-content:flex-end; flex-wrap:wrap; }
+    label{ color: var(--muted2); font-size: 12px; }
+    select, input[type="number"]{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius: 12px;
+      padding:8px 10px;
+      font-size:12px;
+      color: var(--text);
+      outline: none;
+    }
+    input[type="number"]{ width: 110px; }
+    .btn{
+      border:1px solid var(--line);
+      background:#fff;
+      padding:8px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size:12px;
+      color: var(--text);
+      transition: background .15s ease, transform .04s ease;
+    }
+    .btn:hover{ background:#F9FAFB; }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      border-color: rgba(59,130,246,.35);
+      background: rgba(59,130,246,.10);
+    }
+    .btn:disabled{ opacity:.45; cursor:not-allowed; }
+
+    .table{
+      border:1px solid var(--line);
+      border-radius: 16px;
+      overflow:hidden;
+      background:#fff;
+    }
+    table{ width:100%; border-collapse:collapse; }
+    th, td{ padding:10px 12px; border-bottom:1px solid var(--line); font-size:12px; text-align:left; vertical-align:top; }
+    th{ color: var(--muted2); font-weight: 600; background:#F9FAFB; }
+    tr:last-child td{ border-bottom:none; }
+
+    .rightActions{
+      display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="card grow">
+        <h1 style="font-size: 38pt; font-family: 'Impact';">Kyydit 1337</h1>
+        <div class="sub">
+          Tämä appi auttaa sinua luomaan kyytipörssin partioretkelle.<br />
+          Muita appeja: <a href="http://pakki.byethost5.com/">Partiopakki – Luo ruokalistat automaattisesti</a><br />
+            <strong>Tärkeää: </strong>Emme käsittele henkilötietojasi. Tämä appi toimii paikallisella tietokoneellasi, eikä tässä käsiteltävät tiedot siirry Internetiin.
+        </div>
+        <div class="pills" id="pills"></div>
+      </div>
+
+      <div class="card grow">
+        <div class="filebox">
+          <div>
+            <input id="file" type="file" accept=".xlsx,.xls" />
+            <div class="filemeta" id="fileInfo"></div>
+          </div>
+          <div class="rightActions">
+            <button id="exportJson" class="btn primary" disabled>Export JSON</button>
+          </div>
+        </div>
+          <div class="status" id="status"><strong>Ohje:</strong> Downloadaa Kuksasta "K"-tiedosto Excelinä. Uploadaa se tähän aloittaaksesi. Autojako tehdään automaattisesti.</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" id="tabOutbound">Menomatka</button>
+      <button class="tab" id="tabReturn">Paluumatka</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="headerRow">
+          <h2>Kuskit</h2>
+          <div class="hint">Tarvittavat kuskit = heillä on matkustajia. Turhat kuskit voidaan vaihtaa matkustajiksi.</div>
+        </div>
+        <div id="driversBox" class="hint">Uploadaa tiedosto.</div>
+      </div>
+
+      <div class="card">
+        <div class="headerRow">
+          <h2>Matkustajat</h2>
+          <div class="hint">Valitse kuski tarvittaessa. Manuaaliset tekemäsi valinnat lukitaan, me täytämme loput.</div>
+        </div>
+        <div id="passengersBox" class="hint">Uploadaa tiedosto.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Local SheetJS bundle (avoid MIME/CDN issues) -->
+  <script src="./js/xlsx.full.min.js"></script>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    // --- helpers ---
+    function normalizeBool(v) {
+      if (v === true) return true;
+      if (v === false) return false;
+      if (typeof v === "number") return v !== 0;
+      if (typeof v === "string") {
+        const s = v.trim().toLowerCase();
+        if (!s) return false;
+        if (["1","true","yes","y","kyllä","k"].includes(s)) return true;
+        if (["0","false","no","n","ei","e"].includes(s)) return false;
+      }
+      return false;
+    }
+    function extractFirstInt(v) {
+      if (v === null || v === undefined) return null;
+      if (typeof v === "number" && Number.isFinite(v)) return Math.max(0, Math.floor(v));
+      const m = String(v).match(/(\d+)/);
+      return m ? Math.max(0, parseInt(m[1], 10)) : null;
+    }
+    function safeStr(v){ return (v===null || v===undefined) ? "" : String(v).trim(); }
+    function personName(row) {
+      const last = safeStr(row["Sukunimi"]);
+      const first = safeStr(row["Etunimi"]);
+      const extra = safeStr(row["Lisätietoja"]);
+      const base = [first, last].filter(Boolean).join(" ").trim();
+      return extra ? `${base} (${extra})` : base || "(Nimetön)";
+    }
+    function setStatus(html){ $("status").innerHTML = html; }
+
+    // --- state ---
+    let participants = [];
+    // participant:
+    // {id, name, outbound:{own,need}, return:{own,need}, passengerSeats:null|number, roleOverride:{outbound:null|'driver'|'passenger', return:...}}
+    // assignments[leg] = Map(passengerId -> { driverId: string, locked: boolean })
+    let assignments = { outbound: new Map(), return: new Map() };
+    let activeLeg = "outbound";
+
+    // --- column detection ---
+   function findColumns(headers) {
+
+  const byName = (name) =>
+    headers.find(h => typeof h === "string" && h.trim() === name);
+
+  const cap = headers.find(h =>
+    typeof h === "string" &&
+    h.startsWith("Voin tarvittaessa ottaa kimppakyytiin")
+  );
+
+  const needed = {
+    needOutbound: byName("Kyydit / Lapseni tarvitsee kyydin menomatkalla"),
+    needReturn: byName("Kyydit / Lapseni tarvitsee kyydin paluumatkalla"),
+    ownOutbound: byName("Kyydit / Voin kyyditä lapseni menomatkalla"),
+    ownReturn: byName("Kyydit / Voin kyyditä lapseni paluumatkalla")
+  };
+
+  return { cap, needed };
+}
+
+    function rowsFromFirstSheet(workbook) {
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(sheet, { defval: null });
+      return { sheetName, rows: json };
+    }
+
+    function parseParticipants(rows, cols) {
+      return rows.map((row, idx) => {
+        const rawCap = cols.cap ? row[cols.cap] : null;
+        const passengerSeats = extractFirstInt(rawCap); // passengers besides driver
+
+        return {
+          id: String(idx),
+          name: personName(row),
+          outbound: {
+            own: normalizeBool(row[cols.needed.ownOutbound]),
+            need: normalizeBool(row[cols.needed.needOutbound]),
+          },
+          return: {
+            own: normalizeBool(row[cols.needed.ownReturn]),
+            need: normalizeBool(row[cols.needed.needReturn]),
+          },
+          passengerSeats,
+          roleOverride: { outbound: null, return: null }
+        };
+      });
+    }
+
+    // --- role logic (your rule) ---
+    function effectiveRole(p, leg){
+      const ov = p.roleOverride[leg];
+      if (ov) return ov;
+
+      const need = (leg === "outbound" ? p.outbound.need : p.return.need);
+      const own  = (leg === "outbound" ? p.outbound.own  : p.return.own);
+
+      if (need) return "passenger";
+
+      if (own) {
+        // Key rule: unknown seats => passenger; known seats => driver
+        return (p.passengerSeats === null) ? "passenger" : "driver";
+      }
+
+      return "none";
+    }
+
+    function listByRole(leg){
+      const drivers=[], passengers=[];
+      for (const p of participants){
+        const r = effectiveRole(p, leg);
+        if (r === "driver") drivers.push(p);
+        else if (r === "passenger") passengers.push(p);
+      }
+      drivers.sort((a,b) => (b.passengerSeats - a.passengerSeats) || a.name.localeCompare(b.name,"fi"));
+      passengers.sort((a,b) => a.name.localeCompare(b.name,"fi"));
+      return { drivers, passengers };
+    }
+
+    // --- assignment helpers ---
+    function seatsUsed(leg, driverId){
+      let n=0;
+      for (const v of assignments[leg].values()) if (v.driverId === driverId) n++;
+      return n;
+    }
+    function remainingSeats(leg, driver){
+      return Math.max(0, driver.passengerSeats - seatsUsed(leg, driver.id));
+    }
+
+    // Auto assignment:
+    // - Respects locked manual choices
+    // - Assigns remaining passengers greedily by capacity
+    function autoAssign(leg){
+      const { drivers, passengers } = listByRole(leg);
+
+      // Build/clean assignment map entries for passengers
+      const map = assignments[leg];
+      // ensure every passenger has an entry
+      for (const p of passengers){
+        if (!map.has(p.id)) map.set(p.id, { driverId:"", locked:false });
+      }
+      // remove entries for people no longer passengers
+      for (const pid of Array.from(map.keys())){
+        if (!passengers.some(p => p.id === pid)) map.delete(pid);
+      }
+
+      // capacity left
+      const left = new Map(drivers.map(d => [d.id, d.passengerSeats]));
+
+      // First, apply locked assignments (if still valid)
+      for (const p of passengers){
+        const a = map.get(p.id);
+        if (!a || !a.locked) continue;
+
+        const stillDriver = drivers.some(d => d.id === a.driverId);
+        if (!stillDriver) {
+          // invalid now
+          map.set(p.id, { driverId:"", locked:false });
+          continue;
+        }
+        const l = left.get(a.driverId) ?? 0;
+        if (l > 0) left.set(a.driverId, l - 1);
+        else {
+          // overflow -> keep choice but will show in warnings
+          // (we don't auto-change locked choices)
+        }
+      }
+
+      // Then fill unlocked passengers
+      for (const p of passengers){
+        const a = map.get(p.id);
+        if (a && a.locked) continue;
+
+        let chosen = "";
+        for (const d of drivers){
+          const l = left.get(d.id) ?? 0;
+          if (l > 0){
+            chosen = d.id;
+            left.set(d.id, l - 1);
+            break;
+          }
+        }
+        map.set(p.id, { driverId: chosen, locked:false });
+      }
+
+      assignments[leg] = map;
+    }
+
+    function updatePills(){
+      if (!participants.length){ $("pills").innerHTML = ""; return; }
+
+      const { drivers, passengers } = listByRole(activeLeg);
+      const map = assignments[activeLeg];
+
+      const unassigned = passengers.filter(p => (map.get(p.id)?.driverId || "") === "").length;
+      const neededDrivers = drivers.filter(d => seatsUsed(activeLeg, d.id) > 0).length;
+      const unusedDrivers = drivers.length - neededDrivers;
+      const seatSupply = drivers.reduce((s,d)=> s + d.passengerSeats, 0);
+
+      const pill = (dot, text) => `<span class="pill"><span class="dot ${dot}"></span>${text}</span>`;
+      $("pills").innerHTML =
+        pill("warn", activeLeg === "outbound" ? "Menomatka" : "Paluumatka") +
+        pill(drivers.length ? "good":"bad", `Kuskit: ${drivers.length} (tarvitaan ${neededDrivers}, turhia ${unusedDrivers})`) +
+        pill(unassigned ? "bad":"good", `Matkustajat: ${passengers.length} (ilman kuskia ${unassigned})`) +
+        pill(seatSupply >= passengers.length ? "good":"warn", `Paikkoja: ${seatSupply}`);
+    }
+
+    function render(leg){
+      activeLeg = leg;
+      $("tabOutbound").classList.toggle("active", leg==="outbound");
+      $("tabReturn").classList.toggle("active", leg==="return");
+
+      // Always keep assignment up-to-date
+      autoAssign(leg);
+
+      const { drivers, passengers } = listByRole(leg);
+      const map = assignments[leg];
+
+      // warnings summary
+      const unassigned = passengers.filter(p => (map.get(p.id)?.driverId || "") === "").length;
+      const seatSupply = drivers.reduce((s,d)=> s + d.passengerSeats, 0);
+      const enough = seatSupply >= passengers.length;
+
+      const needed = drivers.filter(d => seatsUsed(leg, d.id) > 0);
+      const notNeeded = drivers.filter(d => seatsUsed(leg, d.id) === 0);
+
+      setStatus(
+        `<strong>${leg==="outbound" ? "Menomatka" : "Paluumatka"}</strong> · ` +
+        `Kuskeja <strong>${drivers.length}</strong> · ` +
+        `Matkustajia <strong>${passengers.length}</strong> · ` +
+        `Ilman kuskia <strong style="color:${unassigned? "var(--bad)":"var(--good)"}">${unassigned}</strong> · ` +
+        `Paikkoja <strong style="color:${enough? "var(--good)":"var(--warn)"}">${seatSupply}</strong><br/>` +
+        `<span style="color:var(--muted2)">Kyytien jako toimii automaattisesti. Manuaalisesi tekemäsi kuskivalinnat lukitaan, me täytämme loput.</span>`
+      );
+
+      // Drivers UI
+      const roleSelect = (p) => {
+        const ov = p.roleOverride[leg] || "";
+        return `
+          <select data-role="${p.id}">
+            <option value="" ${ov==="" ? "selected":""}>Automaattinen valinta</option>
+            <option value="driver" ${ov==="driver" ? "selected":""}>Kuski</option>
+            <option value="passenger" ${ov==="passenger" ? "selected":""}>Matkustaja</option>
+          </select>
+        `;
+      };
+
+      const driverCard = (p, badgeText, badgeClass) => {
+        const used = seatsUsed(leg, p.id);
+        const rem = remainingSeats(leg, p);
+        return `
+          <div class="person">
+            <div>
+              <div class="name">${p.name}</div>
+              <div class="meta">
+                <span class="chip ${badgeClass}">${badgeText}</span>
+                <span class="chip">Paikat: <strong>kuski + ${p.passengerSeats}</strong></span>
+                <span class="chip">Käytössä: <strong>${used}</strong></span>
+                <span class="chip">Vapaana: <strong>${rem}</strong></span>
+              </div>
+            </div>
+            <div class="controls">
+              <div class="rowc">
+                <label>Matkustajapaikat</label>
+                <input type="number" min="0" data-cap="${p.id}" value="${p.passengerSeats}" />
+              </div>
+              <div class="rowc">
+                <label>Rooli</label>
+                ${roleSelect(p)}
+              </div>
+            </div>
+          </div>
+        `;
+      };
+
+      const driversHTML = `
+        <div class="sectionTitle"><span>Tarvittavat kuskit</span><span class="line"></span><span>${needed.length}</span></div>
+        <div class="list">
+          ${needed.map(d => driverCard(d, "Tarvitaan", "good")).join("") || `<div class="hint">Ei tarvittavia kuskeja vielä.</div>`}
+        </div>
+        <div class="sectionTitle" style="margin-top:14px;"><span>Turhat kuskit</span><span class="line"></span><span>${notNeeded.length}</span></div>
+        <div class="list">
+          ${notNeeded.map(d => driverCard(d, "Ei tarvita", "bad")).join("") || `<div class="hint">Ei turhia kuskeja.</div>`}
+        </div>
+      `;
+      $("driversBox").innerHTML = driversHTML;
+
+      // Passenger table
+      const driverOptions = () => {
+        const opts = drivers.map(d => {
+          const rem = remainingSeats(leg, d);
+          return `<option value="${d.id}">${d.name} (vap: ${rem})</option>`;
+        }).join("");
+        return `<option value="__AUTO__">Automaattinen</option><option value="">— Ei valittu —</option>` + opts;
+      };
+
+      const paxRows = passengers.map(p => {
+        const a = map.get(p.id) || { driverId:"", locked:false };
+        const lockedChip = a.locked ? `<span class="chip good">Lukittu</span>` : `<span class="chip">Auto</span>`;
+
+        // dropdown value:
+        // - if locked/unlocked but driverId exists -> driverId
+        // - if unlocked and no driver -> "" (unassigned)
+        // - "Auto" option sets unlocked and re-auto-assign
+        const val = a.driverId || "";
+
+        return `
+          <tr>
+            <td style="width:45%"><strong>${p.name}</strong><div style="margin-top:6px">${lockedChip}</div></td>
+            <td>
+              <select data-passenger="${p.id}">
+                ${driverOptions()}
+              </select>
+            </td>
+            <td style="width:140px;">
+              <button class="btn" data-promote="${p.id}">Kuskiksi</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      $("passengersBox").innerHTML = `
+        <div class="table">
+          <table>
+            <thead><tr><th>Matkustaja</th><th>Kuski</th><th></th></tr></thead>
+            <tbody>
+              ${paxRows || `<tr><td colspan="3" class="hint">Ei matkustajia.</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      // Set select values & wire events
+      document.querySelectorAll('select[data-passenger]').forEach(sel => {
+        const pid = sel.getAttribute("data-passenger");
+        const a = map.get(pid) || { driverId:"", locked:false };
+        sel.value = a.driverId || "";
+
+        sel.addEventListener("change", () => {
+          const chosen = sel.value;
+
+          if (chosen === "__AUTO__") {
+            map.set(pid, { driverId:"", locked:false });
+          } else {
+            // manual selection locks (even empty means "I want it unassigned", but that’s weird; we’ll lock only when driver chosen)
+            if (chosen) map.set(pid, { driverId: chosen, locked:true });
+            else map.set(pid, { driverId:"", locked:false });
+          }
+
+          assignments[leg] = map;
+          render(leg);
+        });
+      });
+
+      // Driver capacity changes
+      document.querySelectorAll('input[data-cap]').forEach(inp => {
+        inp.addEventListener("input", () => {
+          const id = inp.getAttribute("data-cap");
+          const p = participants.find(x => x.id === id);
+          if (!p) return;
+          const v = inp.value.trim();
+          p.passengerSeats = (v === "") ? 0 : Math.max(0, parseInt(v, 10) || 0);
+          render(leg);
+        });
+      });
+
+      // Role overrides (also triggers auto)
+      document.querySelectorAll('select[data-role]').forEach(sel => {
+        sel.addEventListener("change", () => {
+          const id = sel.getAttribute("data-role");
+          const p = participants.find(x => x.id === id);
+          if (!p) return;
+
+          const val = sel.value; // "", driver, passenger
+          p.roleOverride[leg] = val || null;
+
+          // If someone stops being driver, unassign passengers from them (unless locked to them — still becomes invalid, we clear lock)
+          if (val === "passenger") {
+            for (const [pid, a] of assignments[leg].entries()) {
+              if (a.driverId === id) assignments[leg].set(pid, { driverId:"", locked:false });
+            }
+            // also ensure the person can be a passenger in the map if their role is passenger
+            assignments[leg].set(id, assignments[leg].get(id) || { driverId:"", locked:false });
+          }
+
+          render(leg);
+        });
+      });
+
+      // Promote passenger to driver
+      document.querySelectorAll('button[data-promote]').forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-promote");
+          const p = participants.find(x => x.id === id);
+          if (!p) return;
+
+          // Make them a driver override
+          p.roleOverride[leg] = "driver";
+
+          // If they had a passenger assignment entry, remove it (they’re no longer a passenger)
+          assignments[leg].delete(id);
+
+          // If they had unknown seats, default to 3 to be useful (you can adjust)
+          if (p.passengerSeats === null) p.passengerSeats = 3;
+
+          render(leg);
+        });
+      });
+
+      updatePills();
+    }
+
+    // --- export ---
+    function exportAssignments(){
+      const out = {};
+      for (const leg of ["outbound","return"]){
+        autoAssign(leg);
+        const { drivers, passengers } = listByRole(leg);
+        const map = assignments[leg];
+
+        const needed = drivers.filter(d => seatsUsed(leg, d.id) > 0);
+        const notNeeded = drivers.filter(d => seatsUsed(leg, d.id) === 0);
+
+        const byDriver = {};
+        drivers.forEach(d => byDriver[d.name] = []);
+        byDriver["(Ei valittu)"] = [];
+
+        passengers.forEach(p => {
+          const a = map.get(p.id) || { driverId:"" };
+          const d = participants.find(x => x.id === a.driverId);
+          const key = d ? d.name : "(Ei valittu)";
+          byDriver[key].push(p.name + (a.locked ? " [lukittu]" : ""));
+        });
+
+        out[leg==="outbound" ? "menomatka" : "paluumatka"] = {
+          drivers_needed: needed.map(d => d.name),
+          drivers_not_needed: notNeeded.map(d => d.name),
+          drivers: drivers.map(d => ({
+            name: d.name,
+            passenger_seats: d.passengerSeats,
+            role_override: d.roleOverride[leg] || null
+          })),
+          passengers: passengers.map(p => p.name),
+          assignments_by_driver: byDriver
+        };
+      }
+
+      const blob = new Blob([JSON.stringify(out, null, 2)], { type:"application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "kyydit-assignments.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // --- wiring ---
+    $("tabOutbound").addEventListener("click", () => render("outbound"));
+    $("tabReturn").addEventListener("click", () => render("return"));
+    $("exportJson").addEventListener("click", exportAssignments);
+
+    $("file").addEventListener("change", async (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+
+      if (typeof XLSX === "undefined") {
+        setStatus(`<strong style="color:var(--bad)">XLSX-kirjasto ei latautunut.</strong> Varmista että <code>./js/xlsx.full.min.js</code> on olemassa ja serveri antaa sen JS MIME-tyypillä.`);
+        return;
+      }
+
+      $("fileInfo").textContent = `Tiedosto: ${f.name} (${Math.round(f.size/1024)} KB)`;
+      setStatus(`Luetaan Exceliä…`);
+
+      const buf = await f.arrayBuffer();
+      const wb = XLSX.read(buf, { type:"array" });
+      const { rows } = rowsFromFirstSheet(wb);
+
+      if (!rows.length){
+        setStatus(`<strong style="color:var(--bad)">Ei rivejä löytynyt.</strong>`);
+        return;
+      }
+
+      const headers = Object.keys(rows[0] || {});
+      const cols = findColumns(headers);
+
+      participants = parseParticipants(rows, cols);
+
+      // Initialize assignments empty
+      assignments.outbound = new Map();
+      assignments.return = new Map();
+
+      // Enable export
+      $("exportJson").disabled = false;
+
+      // Auto-assign immediately (both legs), then render outbound
+      autoAssign("outbound");
+      autoAssign("return");
+
+      setStatus(`<strong>Valmis.</strong> Kyytien jako tehty automaattisesti. Voit muokata rooleja ja paikkoja.`);
+
+      render("outbound");
+    });
+  </script>
+</body>
+</html>
